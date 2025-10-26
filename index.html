@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bybit</title>
+<link rel="icon" type="image/png" href="images/favicon.png" sizes="48x48">
+<link rel="stylesheet" href="styles/style.css" type="text/css"/>
+</head>
+<body>
+	<div class="wrapper">
+	  	<div class="header">
+			<div class="title"><h1>BYBIT</h1></div>
+		</div>
+		<div class="main" style="margin-bottom: 2rem">		
+			<div class="left_block">
+				<div class="result BTCUSDT">
+					<div class="BTCUSDT name">BTCUSDT</div>
+					<div class="BTCUSDT bid"></div>
+					<div class="BTCUSDT bid_vol"></div>
+					<div class="BTCUSDT ask"></div>
+					<div class="BTCUSDT ask_vol"></div>
+				</div>
+
+				<div class="result GBPUSD">
+					<div class="ETHUSDT name">ETHUSDT</div>
+					<div class="ETHUSDT bid"></div>
+					<div class="ETHUSDT bid_vol"></div>
+					<div class="ETHUSDT ask"></div>
+					<div class="ETHUSDT ask_vol"></div>
+				</div>
+
+				<div class="result AUDUSD">
+					<div class="AUDUSD name">XRPUSDT</div>
+					<div class="AUDUSD bid"></div>
+					<div class="AUDUSD bid_vol"></div>
+					<div class="AUDUSD ask"></div>
+					<div class="AUDUSD ask_vol"></div>
+				</div>
+
+				<div class="result USDCHF">
+					<div class="USDCHF name">DOGEUSDT</div>
+					<div class="USDCHF bid"></div>
+					<div class="USDCHF bid_vol"></div>
+					<div class="USDCHF ask"></div>
+					<div class="USDCHF ask_vol"></div>
+				</div>
+
+				<div class="result USDJPY">
+					<div class="USDJPY name">OPUSDT</div>
+					<div class="USDJPY bid"></div>
+					<div class="USDJPY bid_vol"></div>
+					<div class="USDJPY ask"></div>
+					<div class="USDJPY ask_vol"></div>
+				</div>
+
+				<div class="result USDCAD">
+					<div class="USDCAD name">OGUSDT</div>
+					<div class="USDCAD bid"></div>
+					<div class="USDCAD bid_vol"></div>
+					<div class="USDCAD ask"></div>
+					<div class="USDCAD ask_vol"></div>
+				</div>
+			</div>
+			
+		  	
+			
+			<div class="right_block">
+				<div class ="title">
+					<div>Name</div>
+					<div>In Volume</div>
+					<div>Equal Volume</div>
+					<div>Out Volume</div>
+					<div>Sum Volume</div>
+					<div>Sum Filter</div>
+					<div>SAVE btn</div>
+					<div>Result</div>
+				</div>
+				<div class="result EURUSD">
+					
+					<div class="BTCUSDT name"><button class="BTCUSDT btn"></button></div>
+					<div class="BTCUSDT res_1"></div>
+					<div class="BTCUSDT res_2"></div>
+					<div class="BTCUSDT res_3"></div>
+					<div class="BTCUSDT res_4"></div>
+					<div class="BTCUSDT res_5"></div>
+					<div class="BTCUSDT name"><a id="BTCsave">SAVE</a></div>
+					<div class="BTCUSDT buyOrSell">nothing</div>
+				</div>
+
+				<div class="result GBPUSD">
+					<div class="ETHUSDT name"><button class="ETHUSDT btn"></button></div>
+					<div class="ETHUSDT res_1"></div>
+					<div class="ETHUSDT res_2"></div>
+					<div class="ETHUSDT res_3"></div>
+					<div class="ETHUSDT res_4"></div>
+					<div class="ETHUSDT res_5"></div>
+					<div class="ETHUSDT name"><a id="ETHsave">SAVE</a></div>
+					<div class="ETHUSDT buyOrSell">nothing</div>
+				</div>
+
+				<div class="result AUDUSD">
+					<div class="AUDUSD name"><button class="AUDUSD btn"></button></div>
+					<div class="AUDUSD res_1"></div>
+					<div class="AUDUSD res_2"></div>
+					<div class="AUDUSD res_3"></div>
+					<div class="AUDUSD res_4"></div>
+					<div class="AUDUSD res_5"></div>
+					<div class="AUDUSD name"><a id="AUDsave">SAVE</a></div>
+					<div class="AUDUSD buyOrSell">nothing</div>
+				</div>	
+				
+				<div class="result AUDUSD">
+					<div class="USDCHF name"><button class="USDCHF btn"></button></div>
+					<div class="USDCHF res_1"></div>
+					<div class="USDCHF res_2"></div>
+					<div class="USDCHF res_3"></div>
+					<div class="USDCHF res_4"></div>
+					<div class="USDCHF res_5"></div>
+					<div class="USDCHF name"><a id="CHFsave">SAVE</a></div>
+					<div class="USDCHF buyOrSell">nothing</div>
+				</div>	
+
+				<div class="result USDJPY">
+					<div class="USDJPY name"><button class="USDJPY btn"></button></div>
+					<div class="USDJPY res_1"></div>
+					<div class="USDJPY res_2"></div>
+					<div class="USDJPY res_3"></div>
+					<div class="USDJPY res_4"></div>
+					<div class="USDJPY res_5"></div>
+					<div class="USDJPY name"><a id="JPYsave">SAVE</a></div>
+					<div class="USDJPY buyOrSell">nothing</div>
+				</div>	
+
+				<div class="result USDCAD">
+					<div class="USDCAD name"><button class="USDCAD btn"></button></div>
+					<div class="USDCAD res_1"></div>
+					<div class="USDCAD res_2"></div>
+					<div class="USDCAD res_3"></div>
+					<div class="USDCAD res_4"></div>
+					<div class="USDCAD res_5"></div>
+					<div class="USDCAD name"><a id="CADsave">SAVE</a></div>
+					<div class="USDCAD buyOrSell">nothing</div>
+				</div>	
+			</div>	
+				
+		</div>	
+
+		<!--<div class="charts_block">
+			<div class="charts_line">
+				<canvas id="myChart_GBP_vol" style="width: 100%"></canvas>
+				<canvas id="volume_GBP" style="width: 100%"></canvas>-->
+		<!--	</div>
+		</div>-->
+
+	  	<div class="footer">
+			<p>Melnikov Sergey, 2024<p></div>
+		</div>
+	</div>
+	<!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>-->
+	
+	<!--<script src="scripts/script.js"></script>	-->
+	<!--<script type="text/javascript" src="D://Projects/Bybit/bower_components/crypto-js/crypto-js.js"></script>-->
+	<script src="bybit.js"></script>
+	<!--<script src="scripts/js.js"></script> -->
+	
+	
+</body>
+</html>
+
