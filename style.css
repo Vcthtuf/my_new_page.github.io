@@ -1,92 +1,125 @@
-.wrapper {
-	display: flex;
-  	flex-direction: column;
-  	justify-content: space-between;
-  	height: 100vh;
-}
+body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
 
-.title {
-   display: flex;
-    justify-content: center;
-}
+        .container {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            gap: 20px;
+        }
 
-.btn {
-	display: inline-block;	
-   /* margin: 3rem auto;*/
-	box-sizing: border-box;
-	padding: 0 30px;
-	outline: none;
-	border: none;  
-	border-radius: 4px;
-	height: 46px;
-	line-height: 32px;
-	font-size: 16px;
-	font-weight: 500;
-	text-decoration: none;
-	color: #fff;
-	background-color: #3775dd;
-	box-shadow: 0 2px #21487f;
-	cursor: pointer;
-	user-select: none;
-	appearance: none;
-	touch-action: manipulation;  
-	vertical-align: center;
-}
-.btn:hover {
-	background-color: #002fed;
-}
-.btn:active {
-	background-color: #2f599e !important;
-}
-.btn:focus-visible {
-	box-shadow: 0 0 0 3px lightskyblue;
-}
-.btn:disabled {
-	background-color: #6c87b5;
-	pointer-events: none;
-}
+        .exchange {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-.main {
-	margin-top: 2rem;
-}
+        .binance {
+            border-left: 4px solid #f0b90b;
+        }
 
-.left_block {
-    margin: 2rem auto;
-    display: flex;
-    justify-content: space-evenly;
-	align-items: flex-start;
-}
+        .bybit {
+            border-left: 4px solid #5fcde8;
+        }
 
-.right_block {
-	margin: 5rem auto;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	width: 80%;
-	text-align: start;
-}
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
 
-.right_block .output {
-	width: 80%;
-	margin: 0 auto;
-	padding-left: 10%;
-	padding-top: 1rem;
-	padding-bottom: 1rem;
-	font-size: 20px;
-}
+        .connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
 
+        .disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
 
-.result_connect {
-	display: inline-block;
-	width: 25%;
-	text-align: center;;
-	align-self: center;
-	font-size: 26px;
-}
+        .connecting {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
 
-.footer {
-    display: flex;
-    justify-content: center;
-	font-size: 26px;
-	margin-top: auto;
-}
+        .output {
+            height: 300px;
+            overflow-y: auto;
+            background: #eee;
+            color: #000000;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 25px;
+            margin: 10px 0;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .connect-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .disconnect-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .stats {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .signal-panel {
+            grid-column: 1 / -1;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .funding-rate, .volume, .OI, .maker, .taker, .price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .price {
+            align-items: flex-end;
+        }
+
+        .result {
+            padding-right: 20px;
+            width: 30%;
+            text-align: end;
+        }
