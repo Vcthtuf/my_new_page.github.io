@@ -1,129 +1,201 @@
-//import WebSocket from "ws";
-
-
-let socket;
-
-let message_data;
-let price_bid = 0, price_ask = 0, last_price_bid = 0, last_price_ask = 0;
-let BTC_delta_bid = 1000000, BTC_delta_ask = 1000000, ask_max = 0, bid_max = 0;
-let server_date = 0, server_hour = 0, server_minute = 0, time_stamp = 0, server_day = 0, server_month = 0;
-let buyLimit = 0, sellLimit = 0;
-let direction = 'nothing';
-let new_connect = false;
-let arr_output = [];
-
-
-let connect = document.querySelector('#connect');
-let disconnect = document.querySelector('#disconnect');
-let result_connect = document.querySelector('.result_connect');
-let output = document.querySelectorAll('.output');
-let string_out = '';
-
-
-
-function connect_websocket() {
-    socket = new WebSocket("wss://stream.bybit.com/v5/public/linear");
-
-    socket.onopen = function (e) {
-        console.log("Connect");
-
-        result_connect.textContent = "WebSocket Connect";
-
-
-        socket.send(JSON.stringify({
-            op: "subscribe", args: ["priceLimit.BTCUSDT", "tickers.BTCUSDT"]
-        }));
-    };
-
-    socket.onerror = function (error) {
-        console.log(`[error]`);
-    };
-
-    socket.onclose = function (close) {
-        console.log('Time = ', server_hour, ':', server_minute, '. Websocket Close');
-        new_connect = true;
+class TradingSignals {
+    constructor() {
+        this.fundingRates = {
+            binance: {},
+            bybit: {}
+        };
+        this.previousFundingRates = {
+            binance: {},
+            bybit: {}
+        };
+        this.markPrices = {
+            binance: {},
+            bybit: {}
+        };
+        this.signals = [];
+        this.setupEventListeners();
+        this.setupStyles();
     }
 
-    socket.onmessage = function (event) {
-        // console.log(`Данные получены`);
-        message_data = JSON.parse(event.data);
+    // ... остальные методы остаются без изменений ...
 
-        time_stamp = message_data.ts;
+    handleFundingRate(data) {
+        const { exchange, symbol, fundingRate, timestamp } = data;
 
-        price_bid = (Object.hasOwn(message_data, 'data') && Object.hasOwn(message_data.data, 'bid1Price') && message_data.data.symbol == 'BTCUSDT') ? +message_data.data.bid1Price : price_bid;
-        price_ask = (Object.hasOwn(message_data, 'data') && Object.hasOwn(message_data.data, 'ask1Price') && message_data.data.symbol == 'BTCUSDT') ? +message_data.data.ask1Price : price_ask;
+        // Сохраняем предыдущее значение перед обновлением
+        if (this.fundingRates[exchange][symbol]) {
+            this.previousFundingRates[exchange][symbol] = {
+                ...this.fundingRates[exchange][symbol]
+            };
+        }
 
-        buyLimit = (Object.hasOwn(message_data, 'data') && Object.hasOwn(message_data.data, 'buyLmt') && message_data.data.symbol == 'BTCUSDT') ? +message_data.data.buyLmt : buyLimit;
-        sellLimit = (Object.hasOwn(message_data, 'data') && Object.hasOwn(message_data.data, 'sellLmt') && message_data.data.symbol == 'BTCUSDT') ? +message_data.data.sellLmt : sellLimit;
+        // Обновляем текущее значение
+        this.fundingRates[exchange][symbol] = {
+            rate: fundingRate,
+            timestamp: timestamp,
+            lastUpdate: Date.now()
+        };
 
-        BTC_delta_ask = ((buyLimit - price_ask) < BTC_delta_ask) ? buyLimit - price_ask : BTC_delta_ask;
-        BTC_delta_bid = ((price_bid - sellLimit) < Math.abs(BTC_delta_bid)) ? price_bid - sellLimit : BTC_delta_bid;
+        // Обновляем отображение funding rate
+        this.updateFundingDisplay(exchange, symbol, fundingRate);
 
-        ask_max = ((buyLimit - price_ask) > ask_max) ? buyLimit - price_ask : ask_max;
-        bid_max = ((price_bid - sellLimit) > bid_max) ? price_bid - sellLimit : bid_max;
+        // Генерируем сигналы только при изменении funding rate
+        this.generateFundingSignals(exchange, symbol, fundingRate);
 
-    };
-}
+        // Анализируем арбитражные возможности
+        this.analyzeArbitrage(symbol);
+    }
 
-if (new_connect) { connect_websocket(); new_connect = false; }
+    generateFundingSignals(exchange, symbol, currentFundingRate) {
+        const previousData = this.previousFundingRates[exchange][symbol];
+        const currentData = this.fundingRates[exchange][symbol];
 
-connect.onclick = connect_websocket;
+        // Если нет предыдущего значения - выходим (первое получение данных)
+        if (!previousData || !previousData.rate) {
+            return;
+        }
 
+        const previousRate = previousData.rate;
+        const currentRate = currentData.rate;
+        const change = currentRate - previousRate;
+        const changePercent = (change / Math.abs(previousRate)) * 100;
 
+        // Минимальное изменение для генерации сигнала (0.5%)
+        const minChangePercent = 0.5;
 
-disconnect.addEventListener('click', function () {
+        // Если изменение меньше порога - игнорируем
+        if (Math.abs(changePercent) < minChangePercent) {
+            return;
+        }
 
-    socket.close(1000);
+        const signals = [];
+        const currentRatePercent = currentRate * 100;
+        const changePercentFormatted = changePercent.toFixed(3);
 
-    console.log('Disconnect');
+        // Определяем направление изменения
+        if (change > 0) {
+            // Funding rate УВЕЛИЧИЛСЯ
+            signals.push({
+                type: 'FUNDING_INCREASE',
+                exchange: exchange,
+                symbol: symbol,
+                reason: `📈 Funding rate УВЕЛИЧИЛСЯ на ${changePercentFormatted}% (с ${(previousRate * 100).toFixed(4)}% до ${currentRatePercent.toFixed(4)}%)`,
+                confidence: this.getConfidenceLevel(Math.abs(changePercent)),
+                timestamp: Date.now(),
+                fundingRate: currentRate,
+                change: change,
+                changePercent: changePercent
+            });
 
-    result_connect.textContent = "WebSocket Disconnect";
-
-
-});
-
-
-let timerId = setInterval(() => {
-
-
-    server_date = new Date(time_stamp);
-
-    server_month = server_date.getMonth() + 1;
-    server_day = server_date.getDate();
-    server_hour = server_date.getHours();
-    server_minute = server_date.getMinutes();
-
-    if (BTC_delta_ask > BTC_delta_bid && price_bid > last_price_bid) { direction = 'Up'; }
-    if (BTC_delta_ask < BTC_delta_bid && price_bid < last_price_bid) { direction = 'Down'; }
-
-    if (BTC_delta_ask < 1000 || BTC_delta_bid < 1000 || BTC_delta_ask - BTC_delta_bid > 50 || BTC_delta_bid - BTC_delta_ask > 50 || direction == 'Up' || direction == 'Down') {
-
-        // console.log('Time: ', server_hour, ':', server_minute, '. BTC: Bid = ', price_bid, ', Delta = ', (BTC_delta_ask - BTC_delta_bid).toFixed(2), ', Direction = ', direction);
-
-        //   console.log('-------------------------------------------------');
-
-        string_out = 'Time: ' + server_hour + ':' + server_minute + '. BTC: Bid = ' + price_bid + ', Delta = ' + (BTC_delta_ask - BTC_delta_bid).toFixed(2) + ', Direction = ' + direction;
-
-        //  console.log(string_out);
-
-        if (arr_output.length < 5) {
-            arr_output.push(string_out);
+            // Дополнительные сигналы при сильном росте положительного funding
+            if (currentRate > 0.001 && changePercent > 2) {
+                signals.push({
+                    type: 'SHORT_SIGNAL',
+                    exchange: exchange,
+                    symbol: symbol,
+                    reason: `🚨 СИЛЬНЫЙ РОСТ положительного funding! +${changePercentFormatted}% (теперь: ${currentRatePercent.toFixed(4)}%)`,
+                    confidence: 'HIGH',
+                    timestamp: Date.now(),
+                    fundingRate: currentRate
+                });
+            }
         } else {
-            arr_output.shift();
-            arr_output.push(string_out);
+            // Funding rate УМЕНЬШИЛСЯ
+            signals.push({
+                type: 'FUNDING_DECREASE',
+                exchange: exchange,
+                symbol: symbol,
+                reason: `📉 Funding rate УМЕНЬШИЛСЯ на ${Math.abs(changePercentFormatted)}% (с ${(previousRate * 100).toFixed(4)}% до ${currentRatePercent.toFixed(4)}%)`,
+                confidence: this.getConfidenceLevel(Math.abs(changePercent)),
+                timestamp: Date.now(),
+                fundingRate: currentRate,
+                change: change,
+                changePercent: changePercent
+            });
+
+            // Дополнительные сигналы при сильном снижении отрицательного funding
+            if (currentRate < -0.001 && changePercent < -2) {
+                signals.push({
+                    type: 'LONG_SIGNAL',
+                    exchange: exchange,
+                    symbol: symbol,
+                    reason: `🚨 СИЛЬНОЕ СНИЖЕНИЕ отрицательного funding! ${changePercentFormatted}% (теперь: ${currentRatePercent.toFixed(4)}%)`,
+                    confidence: 'HIGH',
+                    timestamp: Date.now(),
+                    fundingRate: currentRate
+                });
+            }
         }
 
-        for (let i = 0; i < arr_output.length; i++) {
-            output[i].textContent = arr_output[i];
+        // Сигналы при смене знака funding rate
+        if (previousRate <= 0 && currentRate > 0) {
+            signals.push({
+                type: 'FUNDING_SIGN_CHANGE',
+                exchange: exchange,
+                symbol: symbol,
+                reason: `🔄 Funding rate сменил знак с отрицательного на положительный: ${currentRatePercent.toFixed(4)}%`,
+                confidence: 'HIGH',
+                timestamp: Date.now(),
+                fundingRate: currentRate
+            });
+        } else if (previousRate >= 0 && currentRate < 0) {
+            signals.push({
+                type: 'FUNDING_SIGN_CHANGE',
+                exchange: exchange,
+                symbol: symbol,
+                reason: `🔄 Funding rate сменил знак с положительного на отрицательный: ${currentRatePercent.toFixed(4)}%`,
+                confidence: 'HIGH',
+                timestamp: Date.now(),
+                fundingRate: currentRate
+            });
         }
 
+        // Выводим сигналы
+        signals.forEach(signal => this.displaySignal(signal));
+
+        // Логируем в консоль для отладки
+        if (signals.length > 0) {
+            console.log(`📊 ${exchange.toUpperCase()} ${symbol}: funding изменился на ${changePercentFormatted}%`, {
+                previous: (previousRate * 100).toFixed(4) + '%',
+                current: (currentRate * 100).toFixed(4) + '%',
+                change: changePercent.toFixed(3) + '%'
+            });
+        }
     }
 
+    // Вспомогательная функция для определения уровня уверенности
+    getConfidenceLevel(changePercent) {
+        if (changePercent >= 5) return 'HIGH';
+        if (changePercent >= 2) return 'MEDIUM';
+        return 'LOW';
+    }
 
-    BTC_delta_ask = 1000000; BTC_delta_bid = 1000000;
-    bid_max = 0; ask_max = 0;
-    last_price_bid = price_bid; last_price_ask = price_ask;
-    direction = 'nothing';
+    // Обновленная функция analyzeArbitrage для отслеживания изменений разницы
+    analyzeArbitrage(symbol) {
+        const binanceFunding = this.fundingRates.binance[symbol];
+        const bybitFunding = this.fundingRates.bybit[symbol];
+        const binancePrevious = this.previousFundingRates.binance[symbol];
+        const bybitPrevious = this.previousFundingRates.bybit[symbol];
 
-}, 60000);
+        if (!binanceFunding || !bybitFunding || !binancePrevious || !bybitPrevious) {
+            return;
+        }
 
+        const currentDiff = Math.abs(binanceFunding.rate - bybitFunding.rate);
+        const previousDiff = Math.abs(binancePrevious.rate - bybitPrevious.rate);
+        const diffChange = currentDiff - previousDiff;
+        const diffChangePercent = (diffChange / previousDiff) * 100;
+
+        // Сигнал при значительном изменении разницы
+        if (Math.abs(diffChangePercent) > 10) { // Изменение разницы на 10%
+            const direction = diffChange > 0 ? 'УВЕЛИЧИЛАСЬ' : 'УМЕНЬШИЛАСЬ';
+            this.displaySignal({
+                type: 'ARBITRAGE_CHANGE',
+                exchange: 'both',
+                symbol: symbol,
+                reason: `🎯 Разница funding rate ${direction} на ${Math.abs(diffChangePercent).toFixed(1)}% (Binance: ${(binanceFunding.rate * 100).toFixed(4)}%, Bybit: ${(bybitFunding.rate * 100).toFixed(4)}%)`,
+                confidence: 'MEDIUM',
+                timestamp: Date.now()
+            });
+        }
+    }
