@@ -1,47 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 
 <head>
-    <title>My page</title>
-    <meta charset="utf-8">
-    <!-- <link rel="icon" type="image/png" href="images/favicon.png" sizes="48x48"> -->
-    <link rel="stylesheet" href="style.css" type="text/css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Binance & Bybit - Trading System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style-js.css">
 </head>
 
 <body>
-    <div class="wrapper">
-        <div class="header">
-            <div class="title">
-                <h1>My page</h1>
+    <h1>WebSocket подключение к Binance и Bybit - Trading System</h1>
+
+    <div class="container">
+        <!-- Binance -->
+        <div class="exchange binance">
+            <h2>Binance Futures</h2>
+            <div class="stats">
+                <div class="binance-status">Статус: <span id="binance-status">Отключен</span></div>
+                <!--    <div>Переподключения: <span id="binance-reconnects">0</span></div> -->
+                <!--    <div>Получено сообщений: <span id="binance-message-count">0</span></div> -->
+            </div>
+            <button class="connect-btn" onclick="connectBinance()">Подключиться</button>
+            <button class="disconnect-btn" onclick="disconnectBinance()">Отключиться</button>
+            <div class="output" id="binance-output">
+                <div class="funding-rate">
+                    <div class="title">Funding-rate:</div>
+                    <div class="result"></div>
+                </div>
+                <div class="volume">
+                    <div class="title">Volume:</div>
+                    <div class="result"></div>
+                </div>
+                <div class="OI">
+                    <div class="title">Open Interest:</div>
+                    <div class="result"></div>
+                </div>
+
+                <div class="maker">
+                    <div class="title">Maker:</div>
+                    <div class="result"></div>
+                </div>
+                <div class="taker">
+                    <div class="title">Taker:</div>
+                    <div class="result"></div>
+                </div>
+                <div class="price">
+                    <div class="title">Price:</div>
+                    <div class="result"></div>
+                </div>
             </div>
         </div>
-        <div class="main" style="margin-bottom: 2rem">
-            <div class="left_block">
-                <button class="btn" id="connect">Соединение</button>
-                <div class="result_connect"></div>
-                <button class='btn' id="disconnect">Отключение</button>
-            </div>
 
-            <div class="right_block">
-                <div class="output"></div>
-                <div class="output"></div>
-                <div class="output"></div>
-                <div class="output"></div>
-                <div class="output"></div>
+        <!-- Bybit -->
+        <div class="exchange bybit">
+            <h2>Bybit Futures</h2>
+            <div class="stats">
+                <div class="bybit-status">Статус: <span id="bybit-status">Отключен</span></div>
+                <!--    <div>Переподключения: <span id="bybit-reconnects">0</span></div> -->
+                <!--    <div>Получено сообщений: <span id="bybit-message-count">0</span></div> -->
             </div>
-
+            <button class="connect-btn" onclick="connectBybit()">Подключиться</button>
+            <button class="disconnect-btn" onclick="disconnectBybit()">Отключиться</button>
+            <div class="output" id="bybit-output">
+                <div class="bybit-funding-rate"></div>
+                <div class="bybit-volume"></div>
+                <div class="bybit-OI"></div>
+                <div class="bybit-maker"></div>
+                <div class="bybit-taker"></div>
+            </div>
         </div>
 
-
-        <div class="footer">
-            <p>Melnikov Sergey, 2025
-            <p>
+        <!-- Панель сигналов -->
+        <div class="signal-panel">
+            <h2>Торговые сигналы</h2>
+            <div id="trading-signals">
+                <div style="text-align: center; color: #666; padding: 20px;">
+                    Сигналы появятся здесь скоро ...
+                </div>
+            </div>
         </div>
     </div>
-    </div>
 
-    <script src="script.js"></script>
-
+    <!-- Подключаем внешние модули -->
+    <script src="connect_binance.js"></script>
+    <!--   <script src="trading-signals.js"></script> -->
 
 
 </body>
